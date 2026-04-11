@@ -1,0 +1,90 @@
+service: coffee-shop-api
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  stage: ${opt:stage, 'dev'}
+  region: us-east-1
+  environment:
+    MENU_ITEMS_TABLE: ${self:service}-${self:provider.stage}-menu-items
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+            - dynamodb:Scan
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource: !GetAtt CoffeeMenuTable.Arn
+
+plugins:
+  - serverless-esbuild
+
+custom:
+  esbuild:
+    bundle: true
+    minify: true
+    sourcemap: true
+    target: node20
+    platform: node
+    sourcesContent: false
+    keepNames: true
+
+functions:
+  createMenuItem:
+    handler: src/handlers/createMenuItem.handler
+    events:
+      - http:
+          path: /menu-items
+          method: post
+          cors: true
+
+  listMenuItems:
+    handler: src/handlers/listMenuItems.handler
+    events:
+      - http:
+          path: /menu-items
+          method: get
+          cors: true
+
+  getMenuItem:
+    handler: src/handlers/getMenuItem.handler
+    events:
+      - http:
+          path: /menu-items/{id}
+          method: get
+          cors: true
+
+  updateMenuItem:
+    handler: src/handlers/updateMenuItem.handler
+    events:
+      - http:
+          path: /menu-items/{id}
+          method: put
+          cors: true
+
+  deleteMenuItem:
+    handler: src/handlers/deleteMenuItem.handler
+    events:
+      - http:
+          path: /menu-items/{id}
+          method: delete
+          cors: true
+
+resources:
+  Resources:
+    CoffeeMenuTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-${self:provider.stage}-menu-items
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
