@@ -103,12 +103,12 @@ Screenshot: DynamoDB Table
 
 ## Technologies Used
 
-  Node.js 20 + JavaScript
-  Serverless Framework v3
-  AWS Lambda
-  Amazon API Gateway
-  Amazon DynamoDB
-  AWS SDK v3
-  esbuild (Lambda packaging)
-  Jest (Unit Testing)
-  GitHub Actions (CI/CD)
+- Node.js 20 + JavaScript
+- Serverless Framework v3
+- AWS Lambda
+- Amazon API Gateway
+- Amazon DynamoDB
+- AWS SDK v3
+- esbuild (Lambda packaging)
+- Jest (Unit Testing)
+- GitHub Actions (CI/CD)
